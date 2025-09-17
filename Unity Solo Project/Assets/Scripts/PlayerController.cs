@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
         PlayerCamera.transform.rotation = Quaternion.Euler(-CameraRotation.y, CameraRotation.x, 0);
         transform.localRotation = Quaternion.AngleAxis(CameraRotation.x, Vector3.up);
 
-        if(Health <= 0)
+        if (Health <= 0)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
@@ -78,25 +78,35 @@ public class PlayerController : MonoBehaviour
     }
     public void Jump()
     {
-        if (Physics.Raycast(ray,JumpDistance))
+        if (Physics.Raycast(ray, JumpDistance))
         {
             rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
 
 
         }
     }
-        private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "DeathZone")
         {
             Health = 0;
         }
-
         if (other.tag == "DamagePart")
         {
-            Destroy(other);
-            other.transform.position = new Vector3(0, -20, 0);
-            Health -= 1;
+            Destroy(other.gameObject);
+            Health--;
+        }
+        if ((other.tag == "HealPickup") & (Health < MaxHealth))
+        {
+            Destroy(other.gameObject);
+            Health++;
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "DamagePart")
+        {
+            Health--;
         }
     }
 }

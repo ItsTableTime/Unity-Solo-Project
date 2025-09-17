@@ -6,6 +6,8 @@ TagManager:
   tags:
   - DeathZone
   - DamagePart
+  - HealPickup
+  - BasicEnemy
   layers:
   - Default
   - TransparentFX
