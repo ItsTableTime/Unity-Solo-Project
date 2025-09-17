@@ -4087,7 +4087,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 925524181}
   serializedVersion: 4
-  m_Mass: 3
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -4216,7 +4216,7 @@ MonoBehaviour:
   MaxHealth: 3
   JumpDistance: 2
   speed: 15
-  jumpHeight: 1500
+  jumpHeight: 25
   CameraRotationLimit: 90
 --- !u!1 &928533947
 GameObject:
