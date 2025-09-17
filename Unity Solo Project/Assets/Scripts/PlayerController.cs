@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Physics.Raycast(ray,JumpDistance))
         {
-            rb.AddForce(transform.up * jumpHeight);
+            rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
 
 
         }
