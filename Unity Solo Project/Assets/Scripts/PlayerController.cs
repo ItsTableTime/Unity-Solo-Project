@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
     InputAction LookVector;
     Camera PlayerCamera;
 
-    RaycastHit hit;
     Ray ray;
     Rigidbody rb;
     float verticalMove;
@@ -91,20 +90,19 @@ public class PlayerController : MonoBehaviour
         {
             Health = 0;
         }
-        if (other.tag == "DamagePart")
+        if ((other.tag == "HealPickup") & (Health+10 < MaxHealth))
         {
             Destroy(other.gameObject);
-            Health--;
-        }
-        if ((other.tag == "HealPickup") & (Health < MaxHealth))
-        {
-            Destroy(other.gameObject);
-            Health++;
+            Health+= 50;
         }
     }
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
         if (collision.gameObject.tag == "DamagePart")
+        {
+            Health--;
+        }
+        if (collision.gameObject.tag == "BasicEnemy")
         {
             Health--;
         }
