@@ -13,6 +13,12 @@ public class PlayerController : MonoBehaviour
     InputAction LookVector;
     Camera PlayerCamera;
 
+    Ray interactRay;
+    RaycastHit interactHit;
+    GameObject pickupObj;
+    public PlayerInput input;
+    public Transform weaponSlot;
+    public Weapon currentWeapon;
     Ray ray;
     Rigidbody rb;
     float verticalMove;
@@ -24,18 +30,27 @@ public class PlayerController : MonoBehaviour
     public int MaxHealth = 3;
     public float JumpDistance = 10f;
     public float speed = 15f;
+    public float reloadmovement = 5f;
+    public float basemovement = 15f;
     public float jumpHeight = 10000f;
     public float CameraRotationLimit = 90.0f;
+    public float InteractDistance = 1f;
+
+    public bool attacking = false;
+
 
     public void Start()
     {
+        input = GetComponent<PlayerInput>();
         ray = new Ray(transform.position, transform.forward);
+        interactRay = new Ray(transform.position, transform.forward);
         CameraOffset = new Vector3(0, .3f, .35f);
         rb = GetComponent<Rigidbody>();
         PlayerCamera = Camera.main;
         LookVector = GetComponent<PlayerInput>().currentActionMap.FindAction("Look");
         CameraRotation = Vector2.zero;
         RespawnPoint = new Vector3(0, 2, 0);
+        weaponSlot = PlayerCamera.transform.GetChild(0);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
@@ -50,6 +65,40 @@ public class PlayerController : MonoBehaviour
         ray.origin = transform.position;
         ray.direction = -transform.up;
         rb.linearVelocity = (temp.x * transform.forward) + (temp.y * transform.up) + (temp.z * transform.right);
+
+        interactRay.origin = PlayerCamera.transform.position;
+        interactRay.direction = PlayerCamera.transform.forward;
+
+        if (Physics.Raycast(interactRay, out interactHit, InteractDistance))
+        {
+            if (interactHit.collider.gameObject.tag == "Weapon")
+            {
+                pickupObj = interactHit.collider.gameObject;
+            }
+            else
+            {
+                pickupObj = null;
+            }
+        }
+        if (currentWeapon)
+        {
+            if (currentWeapon.holdToAttack && attacking == currentWeapon)
+            {
+                currentWeapon.fire();
+            }
+            if (currentWeapon.reloading)
+            {
+                speed = reloadmovement;
+            }
+            else
+            {
+                speed = basemovement;
+            }
+        }
+        else
+        {
+            speed = basemovement;
+        }
 
         // Camera System
         PlayerCamera.transform.position = (transform.position + CameraOffset);
@@ -105,6 +154,66 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.tag == "BasicEnemy")
         {
             Health--;
+        }
+        if (collision.gameObject.tag == "StrongEnemy")
+        {
+            Health -= 3;
+        }
+    }
+    public void Attack(InputAction.CallbackContext context)
+    {
+        if (currentWeapon)
+        {
+            if (currentWeapon.holdToAttack)
+            {
+                if (context.ReadValueAsButton())
+                {
+                    attacking = true;
+                }
+                else
+                {
+                    attacking = false;
+                }
+            }
+        }
+    }
+    public void Reload()
+    {
+        if (currentWeapon)
+        {
+            if (!currentWeapon.reloading)
+            {
+                currentWeapon.reload();
+            }
+        }
+    }
+    public void Interact()
+    {
+        if (pickupObj)
+        {
+            if (pickupObj.tag == "Weapon")
+            {
+                if (currentWeapon)
+                {
+                    
+                }
+                else
+                {
+                    pickupObj.GetComponent<Weapon>().equip(this);
+                }
+            }
+            else
+            {
+                Reload();
+            }
+
+        }
+    }
+    public void DropWeapon()
+    {
+        if (currentWeapon)
+        {
+            currentWeapon.GetComponent<Weapon>().unequip();
         }
     }
 }

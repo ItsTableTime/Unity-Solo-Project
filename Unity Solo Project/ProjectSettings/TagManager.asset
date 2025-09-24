@@ -8,6 +8,11 @@ TagManager:
   - DamagePart
   - HealPickup
   - BasicEnemy
+  - Bullet
+  - Weapon
+  - BigBullet
+  - RailBullet
+  - StrongEnemy
   layers:
   - Default
   - TransparentFX

@@ -9,6 +9,8 @@ public class BasicEnemyController : MonoBehaviour
     public float EnemyVision = 30f;
     public float EnemyAggro = 30f;
     public int WanderChance = 60;
+    public float EnemyHealth = 100f;
+    Rigidbody BoxRigidBody;
     int IsWander;
     Vector3 EnemyPosition;
     Vector3 PlayerPosition;
@@ -40,5 +42,44 @@ public class BasicEnemyController : MonoBehaviour
             }
         }
 
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Bullet")
+        {
+            Destroy(collision.gameObject);
+            EnemyHealth -= 10;
+            if (EnemyHealth < 1)
+            {
+                Destroy(gameObject);
+            }
+        }
+        if (collision.gameObject.tag == "BigBullet")
+        {
+            Destroy(collision.gameObject);
+            EnemyHealth -= 30;
+            if (EnemyHealth < 1)
+            {
+                Destroy(gameObject);
+            }
+        }
+        if (collision.gameObject.tag == "RailBullet")
+        {
+            Destroy(collision.gameObject);
+            EnemyHealth -= 100;
+            if (EnemyHealth < 1)
+            {
+                Destroy(gameObject);
+            }
+        }
+        if (collision.gameObject.tag =="Weapon")
+        {
+            BoxRigidBody = collision.gameObject.GetComponent<Rigidbody>();
+            EnemyHealth -= Mathf.Abs(BoxRigidBody.transform.up.y) * BoxRigidBody.mass;
+            if (EnemyHealth < 1)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }
